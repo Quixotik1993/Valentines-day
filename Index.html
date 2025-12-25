@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine's Day Tribute</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Vollbild-Hintergrund */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: black;
+    }
+
+    /* Hintergrundfoto */
+    body {
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container für Symbol & Text */
+    .container {
+      text-align: center;
+      color: #e0e0e0;
+      backdrop-filter: brightness(0.6);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    /* Minimalistisches Symbol */
+    .symbol {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      border: 3px solid #e0e0e0;
+      transform: rotate(45deg);
+    }
+
+    p {
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      line-height: 1.5;
+    }
+
+    /* Animierter Geburtstags-Text */
+    .birthday-text {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.5rem;
+      color: #ffcc00;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: slideText 12s linear infinite;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+
+    @keyframes slideText {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Mobile Anpassungen */
+    @media (max-width: 600px) {
+      .symbol {
+        width: 80px;
+        height: 80px;
+      }
+      p {
+        font-size: 1rem;
+      }
+      .birthday-text {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animierter Geburtstagstext -->
+  <div class="birthday-text">
+    Alles Liebe zum Geburtstag, Linda! 🎉 Viel Spaß beim One Step Closer Konzert in Coesfeld am 14.02.!
+  </div>
+
+  <!-- Container mit Symbol und Text -->
+  <div class="container">
+    <div class="symbol"></div>
+    <p>For this Valentine’s Day<br>One step closer — live<br>14.02</p>
+
+    <!-- Musik -->
+    <audio id="audio" autoplay>
+      <source src="valentines-day.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // Klick-Fallback für Mobile Autoplay
+    document.body.addEventListener('click', function () {
+      const audio = document.getElementById('audio');
+      if (audio.paused) audio.play();
+    }, { once: true });
+  </script>
+</body>
+</html>
