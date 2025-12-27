@@ -55,4 +55,72 @@
 
     /* Text-Einblendungen */
     .fade-text {
-      posit
+      position: relative;
+      width: 100%;
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 6px rgba(0,0,0,0.6);
+      font-size: 1.6rem;
+      font-weight: 600;
+      opacity: 0;
+      margin: 8px 0;
+    }
+
+    /* Herz hinter Linda */
+    .heart {
+      position: absolute;
+      font-size: 2.5rem;
+      color: rgba(255,0,0,0.25);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .t1 { animation: show1 2.2s ease forwards 1s; }
+    .t2 { animation: show2 2.2s ease forwards 4s; }
+    .t3 { animation: show3 2.2s ease forwards 7s; }
+
+    @keyframes show1 { to { opacity: 1; } }
+    @keyframes show2 { to { opacity: 1; } }
+    @keyframes show3 { to { opacity: 1; } }
+
+    /* Mobile Anpassungen */
+    @media (max-width: 600px) {
+      .background-img { max-width: 80%; max-height: 40%; }
+      .symbol { width: 22px; height: 22px; }
+      .fade-text { font-size: 1.2rem; }
+      .heart { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Herz hinter Text -->
+  <div class="heart">❤</div>
+
+  <!-- Foto -->
+  <img class="background-img" src="Background.jpg" alt="Tribute Band Foto" />
+
+  <!-- Symbol -->
+  <div class="symbol"></div>
+
+  <!-- Fade-Einblendungen -->
+  <div class="fade-text t1">Alles Liebe zum Geburtstag, Linda 🎉</div>
+  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
+  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+
+  <!-- Musik -->
+  <audio id="audio" autoplay>
+    <source src="Valentines_day.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    // Autoplay-Fix für Mobilgeräte
+    document.body.addEventListener("click", function () {
+      const audio = document.getElementById("audio");
+      if (audio.paused) audio.play();
+    }, { once: true });
+  </script>
+</body>
+</html>
