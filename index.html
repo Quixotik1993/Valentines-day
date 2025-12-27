@@ -6,52 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    /* Reset */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
       background: black;
-    }
-
-    /* Hintergrund (Bild muss exakt Background.jpg heißen) */
-    body {
-      background: url("Background.jpg") no-repeat center center fixed;
-      background-size: cover;
+      font-family: "Segoe UI", Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* Blur + Kontrast-Container */
-    .container {
-      text-align: center;
-      color: #e0e0e0;
-      backdrop-filter: brightness(0.6);
-      padding: 25px;
-      border-radius: 14px;
+    body {
+      background: url("Background.jpg") no-repeat center center fixed;
+      background-size: cover;
     }
 
-    /* Minimalistisches Symbol */
-    .symbol {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 30px;
-      border: 3px solid #e0e0e0;
-      transform: rotate(45deg);
-      border-radius: 6px;
-    }
-
-    p {
-      font-size: 1.3rem;
-      letter-spacing: 1.2px;
-      line-height: 1.6;
-    }
-
-    /* 🎉 Modern eleganter Lauftext */
+    /* Moderner Lauftext (oben) */
     .birthday-text-wrapper {
       position: absolute;
       top: 18px;
@@ -77,16 +50,50 @@
       100% { transform: translateX(-100%); }
     }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+    /* Minimalistisches, kleineres Symbol */
+    .symbol {
+      width: 70px;
+      height: 70px;
+      border: 3px solid #ffffffcc;
+      transform: rotate(45deg);
+      border-radius: 6px;
+      margin-bottom: 25px;
+      animation: fadeInSymbol 1.8s ease-out forwards;
+      opacity: 0;
     }
 
-    /* Mobile Optimierung */
+    @keyframes fadeInSymbol {
+      0% { opacity: 0; transform: scale(0.6) rotate(45deg); }
+      100% { opacity: 1; transform: scale(1) rotate(45deg); }
+    }
+
+    /* Text-Fade-Einblendungen */
+    .fade-text {
+      position: absolute;
+      bottom: 14%;
+      width: 100%;
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 6px rgba(0,0,0,0.6);
+      font-size: 1.6rem;
+      font-weight: 600;
+      opacity: 0;
+    }
+
+    .t1 { animation: show1 2.5s ease forwards 1s; }
+    .t2 { animation: show2 2.5s ease forwards 4s; }
+    .t3 { animation: show3 2.5s ease forwards 7s; }
+
+    @keyframes show1 { to { opacity: 1; } }
+    @keyframes show2 { to { opacity: 1; } }
+    @keyframes show3 { to { opacity: 1; } }
+
     @media (max-width: 600px) {
-      .symbol { width: 80px; height: 80px; }
-      p { font-size: 1rem; }
+      .symbol { width: 50px; height: 50px; }
       .birthday-text { font-size: 1.05rem; }
+      .fade-text { font-size: 1.2rem; bottom: 12%; }
     }
   </style>
 </head>
@@ -99,19 +106,21 @@
     </div>
   </div>
 
-  <!-- Inhalt / Symbol -->
-  <div class="container">
-    <div class="symbol"></div>
-    <p>For this Valentine’s Day<br>One step closer — live<br>14.02</p>
+  <!-- Symbol -->
+  <div class="symbol"></div>
 
-    <!-- Musik -->
-    <audio id="audio" autoplay>
-      <source src="Valentines_day.mp3" type="audio/mpeg" />
-    </audio>
-  </div>
+  <!-- Einblendungen -->
+  <div class="fade-text t1">Alles Liebe zum Geburtstag, Linda 🎉</div>
+  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
+  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+
+  <!-- Musik -->
+  <audio id="audio" autoplay>
+    <source src="Valentines_day.mp3" type="audio/mpeg" />
+  </audio>
 
   <script>
-    // Autoplay-Fallback für iPhone
+    // Autoplay-Fix für iPhone
     document.body.addEventListener("click", function () {
       const audio = document.getElementById("audio");
       if (audio.paused) audio.play();
