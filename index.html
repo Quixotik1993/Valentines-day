@@ -19,12 +19,19 @@
       align-items: center;
     }
 
+    /* 🎥 Cinematic Zoom-In Hintergrundbild */
     body {
       background: url("Background.jpg") no-repeat center center fixed;
-      background-size: cover;
+      background-size: 120%;
+      animation: bgZoom 28s ease-out forwards;
     }
 
-    /* Minimalistisches, kleineres Symbol */
+    @keyframes bgZoom {
+      0%   { background-size: 120%; }
+      100% { background-size: 160%; }
+    }
+
+    /* 🔷 Kleines minimalistisches Symbol */
     .symbol {
       width: 70px;
       height: 70px;
@@ -42,7 +49,7 @@
       100% { opacity: 1; transform: scale(1) rotate(45deg); }
     }
 
-    /* Text-Fade-Einblendungen */
+    /* ✨ Fade-Text Animationen */
     .fade-text {
       position: absolute;
       width: 100%;
@@ -62,4 +69,37 @@
     @keyframes show2 { to { opacity: 1; } }
     @keyframes show3 { to { opacity: 1; } }
 
-    @media
+    /* 📱 Mobile Optimierung */
+    @media (max-width: 600px) {
+      .symbol { width: 50px; height: 50px; top: 18%; }
+      .fade-text { font-size: 1.2rem; }
+      .t1 { bottom: 24%; }
+      .t2 { bottom: 18%; }
+      .t3 { bottom: 12%; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Symbol -->
+  <div class="symbol"></div>
+
+  <!-- Fade-Einblendungen -->
+  <div class="fade-text t1">Alles Liebe zum Geburtstag, Linda 🎉</div>
+  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
+  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+
+  <!-- 🎵 Musik -->
+  <audio id="audio" autoplay>
+    <source src="Valentines_day.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    // Mobilgeräte blocken Autoplay → 1x Tippen aktiviert Musik
+    document.body.addEventListener("click", function () {
+      const audio = document.getElementById("audio");
+      if (audio.paused) audio.play();
+    }, { once: true });
+  </script>
+</body>
+</html>
