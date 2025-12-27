@@ -42,20 +42,20 @@
 
     /* Symbol */
     .symbol {
-      width: 30px;
-      height: 30px;
-      border: 2px solid #ffffffbb;
-      transform: rotate(45deg);
-      border-radius: 4px;
-      margin-bottom: 20px;
-      animation: fadeInSymbol 1.5s ease-out forwards;
-      opacity: 0;
-    }
+  width: 30px;
+  height: 30px;
+  border: 2px solid #ffffffbb;
+  transform: rotate(45deg);
+  border-radius: 4px;
+  margin-bottom: 20px;
+  animation: fadeInSymbol 4s ease-out forwards; /* vorher 1.5s */
+  opacity: 0;
+}
 
-    @keyframes fadeInSymbol {
-      0% { opacity: 0; transform: scale(0.6) rotate(45deg); }
-      100% { opacity: 1; transform: scale(1) rotate(45deg); }
-    }
+@keyframes fadeInSymbol {
+  0% { opacity: 0; transform: scale(0.6) rotate(45deg); }
+  100% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
 
     /* Fade-Text mit modernem LP-Style */
     .fade-text {
