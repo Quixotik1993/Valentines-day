@@ -11,36 +11,40 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
       background: black;
       font-family: "Segoe UI", Arial, sans-serif;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
 
-    /* 🎥 Cinematic Zoom-In Hintergrund */
-    body {
-      background: url("Background.jpg") no-repeat center center fixed;
-      background-size: 120%;
-      animation: bgZoom 28s ease-out forwards;
+    /* Foto */
+    .background-img {
+      max-width: 50%;
+      max-height: 50%;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      object-fit: contain;
+      animation: fadeInImg 2s ease forwards;
+      opacity: 0;
     }
 
-    @keyframes bgZoom {
-      0%   { background-size: 120%; }
-      100% { background-size: 160%; }
+    @keyframes fadeInImg {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
-    /* 🔷 Sehr kleines minimalistisches Symbol */
+    /* Symbol */
     .symbol {
       width: 30px;
       height: 30px;
       border: 2px solid #ffffffbb;
       transform: rotate(45deg);
       border-radius: 4px;
-      position: absolute;
-      top: 25%;
-      animation: fadeInSymbol 1.8s ease-out forwards;
+      margin-bottom: 20px;
+      animation: fadeInSymbol 1.5s ease-out forwards;
       opacity: 0;
     }
 
@@ -49,57 +53,6 @@
       100% { opacity: 1; transform: scale(1) rotate(45deg); }
     }
 
-    /* ✨ Fade-Text Animationen */
+    /* Text-Einblendungen */
     .fade-text {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      color: white;
-      text-shadow: 0 0 6px rgba(0,0,0,0.6);
-      font-size: 1.6rem;
-      font-weight: 600;
-      opacity: 0;
-    }
-
-    .t1 { bottom: 20%; animation: show1 2.2s ease forwards 1s; }
-    .t2 { bottom: 14%; animation: show2 2.2s ease forwards 4s; }
-    .t3 { bottom: 8%;  animation: show3 2.2s ease forwards 7s; }
-
-    @keyframes show1 { to { opacity: 1; } }
-    @keyframes show2 { to { opacity: 1; } }
-    @keyframes show3 { to { opacity: 1; } }
-
-    /* 📱 Mobile Optimierung */
-    @media (max-width: 600px) {
-      .symbol { width: 22px; height: 22px; top: 22%; }
-      .fade-text { font-size: 1.2rem; }
-      .t1 { bottom: 24%; }
-      .t2 { bottom: 18%; }
-      .t3 { bottom: 12%; }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Sehr kleines Symbol -->
-  <div class="symbol"></div>
-
-  <!-- Text-Fades -->
-  <div class="fade-text t1">Alles Liebe zum Geburtstag, Linda 🎉</div>
-  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
-
-  <!-- Musik -->
-  <audio id="audio" autoplay>
-    <source src="Valentines_day.mp3" type="audio/mpeg" />
-  </audio>
-
-  <script>
-    // Mobilgeräte: Autoplay erst nach Touch
-    document.body.addEventListener("click", function () {
-      const audio = document.getElementById("audio");
-      if (audio.paused) audio.play();
-    }, { once: true });
-  </script>
-</body>
-</html>
+      posit
