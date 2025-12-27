@@ -24,34 +24,6 @@
       background-size: cover;
     }
 
-    /* Moderner Lauftext (oben) */
-    .birthday-text-wrapper {
-      position: absolute;
-      top: 18px;
-      width: 100%;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .birthday-text {
-      display: inline-block;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #ffe58a;
-      text-shadow: 0 0 6px rgba(0,0,0,0.55);
-      white-space: nowrap;
-      padding-left: 100%;
-      opacity: 0;
-      animation: smoothScroll 18s linear infinite, fadeIn 2s ease-in forwards;
-    }
-
-    @keyframes smoothScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-
-    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-
     /* Minimalistisches, kleineres Symbol */
     .symbol {
       width: 70px;
@@ -59,7 +31,8 @@
       border: 3px solid #ffffffcc;
       transform: rotate(45deg);
       border-radius: 6px;
-      margin-bottom: 25px;
+      position: absolute;
+      top: 20%;
       animation: fadeInSymbol 1.8s ease-out forwards;
       opacity: 0;
     }
@@ -72,7 +45,6 @@
     /* Text-Fade-Einblendungen */
     .fade-text {
       position: absolute;
-      bottom: 14%;
       width: 100%;
       text-align: center;
       color: white;
@@ -82,49 +54,12 @@
       opacity: 0;
     }
 
-    .t1 { animation: show1 2.5s ease forwards 1s; }
-    .t2 { animation: show2 2.5s ease forwards 4s; }
-    .t3 { animation: show3 2.5s ease forwards 7s; }
+    .t1 { bottom: 20%; animation: show1 2.2s ease forwards 1s; }
+    .t2 { bottom: 14%; animation: show2 2.2s ease forwards 4s; }
+    .t3 { bottom: 8%;  animation: show3 2.2s ease forwards 7s; }
 
     @keyframes show1 { to { opacity: 1; } }
     @keyframes show2 { to { opacity: 1; } }
     @keyframes show3 { to { opacity: 1; } }
 
-    @media (max-width: 600px) {
-      .symbol { width: 50px; height: 50px; }
-      .birthday-text { font-size: 1.05rem; }
-      .fade-text { font-size: 1.2rem; bottom: 12%; }
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Lauftext -->
-  <div class="birthday-text-wrapper">
-    <div class="birthday-text">
-      Alles Liebe zum Geburtstag, Linda 💛 — Konzertkarten für One Step Closer am 14.02. in Coesfeld 🎶
-    </div>
-  </div>
-
-  <!-- Symbol -->
-  <div class="symbol"></div>
-
-  <!-- Einblendungen -->
-  <div class="fade-text t1">Alles Liebe zum Geburtstag, Linda 🎉</div>
-  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
-
-  <!-- Musik -->
-  <audio id="audio" autoplay>
-    <source src="Valentines_day.mp3" type="audio/mpeg" />
-  </audio>
-
-  <script>
-    // Autoplay-Fix für iPhone
-    document.body.addEventListener("click", function () {
-      const audio = document.getElementById("audio");
-      if (audio.paused) audio.play();
-    }, { once: true });
-  </script>
-</body>
-</html>
+    @media
