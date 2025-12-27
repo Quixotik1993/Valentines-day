@@ -48,13 +48,22 @@ html, body {
   transform: rotate(45deg);
   border-radius: 4px;
   margin-bottom: 20px;
-  animation: fadeInSymbol 4s ease-out forwards; /* langsameres Fade-In */
+  animation: fadeInSymbol 4s ease-out forwards;
   opacity: 0;
 }
 
 @keyframes fadeInSymbol {
   0% { opacity: 0; transform: scale(0.6) rotate(45deg); }
   100% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+
+/* Grunge Textur via CSS */
+.grunge {
+  background: url('https://i.ibb.co/x5K6Rjy/grunge-texture.png');
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: cover;
+  background-repeat: repeat;
 }
 
 /* Fade-Text modern LP-Style */
@@ -66,28 +75,25 @@ html, body {
   margin: 6px 0;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.05);
   font-size: 2rem;
   position: relative;
   z-index: 2;
+  transform: rotate(-1deg);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 /* Haupttext */
 .t1 {
-  color: #f0f0f0;
   font-size: 2.4rem;
   animation: show1 2.5s ease forwards 1s;
   transform: rotate(-2deg) translateX(-20px);
 }
-
-/* Name/Herz-Highlight */
 .t1 span {
-  color: #ff4b5c; /* kräftiges Pink-Rot */
+  color: #ff4b5c; /* Herz Highlight */
 }
 
 /* Konzertkarten */
 .t2 {
-  color: #e0e0e0;
   font-size: 2rem;
   animation: show2 2.5s ease forwards 4s;
   transform: rotate(1deg) translateX(20px);
@@ -95,7 +101,6 @@ html, body {
 
 /* Datum & Ort */
 .t3 {
-  color: #cfcfcf;
   font-size: 1.8rem;
   animation: show3 2.5s ease forwards 7s;
   transform: rotate(-1deg) translateX(-15px);
@@ -125,10 +130,10 @@ html, body {
 <!-- Symbol -->
 <div class="symbol"></div>
 
-<!-- Fade-Text im LP-Style -->
-<div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
-<div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-<div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+<!-- Fade-Text mit Grunge -->
+<div class="fade-text t1 grunge">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
+<div class="fade-text t2 grunge">Konzertkarten für One Step Closer 🎶</div>
+<div class="fade-text t3 grunge">14. Februar · Coesfeld · Live 🖤</div>
 
 <!-- Musik -->
 <audio id="audio" autoplay>
