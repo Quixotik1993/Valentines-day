@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Birthday Reveal</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
 html, body {
   margin:0; padding:0; width:100%; height:100%;
@@ -20,25 +18,21 @@ html, body {
   position:relative;
   width:90vw; max-width:500px;
   height:70vh; max-height:650px;
-  display:flex; justify-content:center; align-items:center;
 }
 
-/* Geschenk darunter */
 #content {
   position:absolute;
   width:100%; height:100%;
-  display:flex; justify-content:center; align-items:center;
-  flex-direction:column;
-  opacity:1;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
   pointer-events:none;
+  opacity:1;
 }
 
 .background-img {
   max-width:70%; border-radius:8px; margin-bottom:20px;
-  opacity:1;
 }
 
-/* Texte */
 .fade-text {
   opacity:0; margin:6px 0; letter-spacing:1.5px;
   text-transform:uppercase;
@@ -51,15 +45,15 @@ html, body {
 .t2 { color:#e0e0e0; font-size:1.9rem; }
 .t3 { color:#cfcfcf; font-size:1.4rem; }
 
-/* Scratch Overlay */
 #scratchCanvas {
   position:absolute;
   width:100%; height:100%;
   border-radius:8px;
   cursor:grab;
+  z-index:10;
+  background:#777;
 }
 
-/* Hinweis */
 #hint {
   position:absolute; top:50%; left:50%;
   transform:translate(-50%,-50%);
@@ -67,30 +61,25 @@ html, body {
   font-size:1.3rem; opacity:1;
   transition:opacity 0.6s ease;
   pointer-events:none;
-  z-index:5;
+  z-index:15;
 }
 </style>
 </head>
-
 <body>
 
 <div id="revealContainer">
-
-  <!-- Geschenk -->
   <div id="content">
     <img class="background-img" src="Background.jpg" alt="Foto">
     <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
     <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-    <div class="fade-text t3">14. Februar · Coesfeld 🖤</div>
+    <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
   </div>
 
-  <!-- Rubbelkarte -->
   <canvas id="scratchCanvas"></canvas>
 
-  <div id="hint">✨ Hier freirubbeln ✨</div>
+  <div id="hint">✨ Zum Freirubbeln mit dem Finger oder der Maus ✨</div>
 </div>
 
-<!-- Musik -->
 <audio id="audio">
   <source src="Valentines_day.mp3" type="audio/mpeg">
 </audio>
@@ -123,9 +112,9 @@ function scratch(x,y) {
   ctx.beginPath();
   ctx.arc(x, y, 30, 0, Math.PI*2);
   ctx.fill();
+
   if (navigator.vibrate) navigator.vibrate(15);
 
-  // Audio beim ersten Rubbeln starten
   if (!startedAudio) {
     audio.volume = 0.1;
     audio.play().catch(()=>{});
@@ -136,18 +125,52 @@ function scratch(x,y) {
 function getCleared() {
   const image = ctx.getImageData(0,0,canvas.width,canvas.height).data;
   let clear = 0;
-  for (let i = 3; i < image.length; i += 4) {
-    if (image[i] === 0) clear++;
+  for (let i = 3; i < image.length; i+=4) {
+    if (image[i]===0) clear++;
   }
-  return clear / (image.length / 4);
+  return clear/(image.length/4);
 }
 
 function triggerRevealOnce() {
   if (revealed) return;
   revealed = true;
 
-  // Hinweis ausblenden
   hint.style.opacity = 0;
 
-  // Texte nacheinander einblenden
-  setTimeout(()=>{ t
+  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; }, 200);
+  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; }, 1200);
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; }, 2000);
+
+  let vol = 0.1;
+  const fade = setInterval(()=>{
+    vol += 0.02;
+    if(vol>=1){ vol=1; clearInterval(fade); }
+    audio.volume = vol;
+  },120);
+}
+
+function checkReveal() {
+  if(getCleared()>0.65) triggerRevealOnce();
+}
+
+canvas.addEventListener("mousedown",()=>isDrawing=true);
+canvas.addEventListener("mouseup",()=>isDrawing=false);
+canvas.addEventListener("mousemove", e=>{
+  if(!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  scratch(e.clientX-rect.left, e.clientY-rect.top);
+  checkReveal();
+});
+
+canvas.addEventListener("touchstart",()=>isDrawing=true);
+canvas.addEventListener("touchend",()=>isDrawing=false);
+canvas.addEventListener("touchmove", e=>{
+  const t = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  scratch(t.clientX-rect.left, t.clientY-rect.top);
+  checkReveal();
+});
+</script>
+
+</body>
+</html>
