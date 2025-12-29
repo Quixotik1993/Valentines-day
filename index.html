@@ -62,6 +62,7 @@ html, body {
   width:100%; height:100%;
   cursor:grab;
   z-index:10;
+  background:#777;
 }
 
 #hint {
@@ -108,6 +109,7 @@ const audio = document.getElementById("audio");
 
 let isDrawing=false, revealed=false, startedAudio=false;
 
+// Canvas High-DPI korrekt skalieren
 function resizeCanvas(){
   const dpr = window.devicePixelRatio || 1;
   canvas.width = canvas.offsetWidth*dpr;
@@ -129,11 +131,7 @@ function scratch(x,y){
   ctx.fill();
   if(navigator.vibrate) navigator.vibrate(15);
 
-  if(!startedAudio){
-    audio.volume=0.1;
-    audio.play().catch(()=>{});
-    startedAudio=true;
-  }
+  if(!startedAudio) startAudio();
 }
 
 function getCleared(){
@@ -152,13 +150,6 @@ function triggerRevealOnce(){
   setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; },200);
   setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; },1200);
   setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; },2000);
-
-  let vol=0.1;
-  const fade=setInterval(()=>{
-    vol+=0.02;
-    if(vol>=1){ vol=1; clearInterval(fade); }
-    audio.volume=vol;
-  },120);
 }
 
 function checkReveal(){ if(getCleared()>0.65) triggerRevealOnce(); }
@@ -174,6 +165,20 @@ function getXY(e){
     y = e.clientY - rect.top;
   }
   return {x,y};
+}
+
+// Musik starten beim ersten User-Gesture
+function startAudio(){
+  if(startedAudio) return;
+  startedAudio=true;
+  audio.volume=0.0;
+  audio.play().catch(()=>{});
+  let vol=0.0;
+  const fade=setInterval(()=>{
+    vol+=0.02;
+    if(vol>=1){ vol=1; clearInterval(fade);}
+    audio.volume=vol;
+  },120);
 }
 
 // Mouse Events
