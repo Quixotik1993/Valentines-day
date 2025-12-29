@@ -7,56 +7,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 <style>
-html, body {margin:0; padding:0; width:100%; height:100%; background:black; font-family:'Oswald',sans-serif; display:flex; justify-content:center; align-items:center; overflow:hidden;}
-#revealContainer {position:relative; width:100vw; height:100vh;}
-#content {position:absolute; width:100%; height:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; pointer-events:none;}
-.background-img {max-width:70%; border-radius:8px; margin-bottom:20px;}
-#logo {position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:150px; height:150px; background:url('Logo.png') no-repeat center/contain; opacity:1; z-index:1;}
-.fade-text {opacity:0; margin:6px 0; letter-spacing:1.5px; text-transform:uppercase; text-shadow:2px 2px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.05); font-size:2rem; font-weight:700; text-align:center; z-index:2;}
-.t1 {color:#f0f0f0; font-size:2.3rem;} .t1 span {color:#ff4b5c;} .t2 {color:#e0e0e0; font-size:1.9rem;} .t3 {color:#cfcfcf; font-size:1.4rem;}
-#scratchCanvas {position:absolute; top:0; left:0; width:100%; height:100%; cursor:grab; z-index:10; background:#777;}
-#hint {position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; text-align:center; font-size:1.3rem; opacity:1; transition:opacity 0.6s ease; pointer-events:none; z-index:15;}
-#startButton {position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); padding:20px 40px; font-size:1.5rem; cursor:pointer; background:#ff4b5c; color:white; border:none; border-radius:10px; z-index:20;}
+html, body {
+  margin:0; padding:0; width:100%; height:100%;
+  background:black;
+  font-family:'Oswald',sans-serif;
+  display:flex; justify-content:center; align-items:center;
+  overflow:hidden;
+}
+
+#revealContainer {
+  position:relative;
+  width:100vw; height:100vh;
+}
+
+#content {
+  position:absolute;
+  width:100%; height:100%;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column;
+  pointer-events:none;
+}
+
+.background-img {
+  max-width:70%;
+  border-radius:8px;
+  margin-bottom:20px;
+}
+
+#logo {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:150px; height:150px; /* Logo-Größe */
+  background: url('Logo.png') no-repeat center/contain;
+  opacity:1;
+  z-index:1;
+}
+
+.fade-text {
+  opacity:0; margin:6px 0; letter-spacing:1.5px;
+  text-transform:uppercase;
+  text-shadow:2px 2px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.05);
+  font-size:2rem; font-weight:700;
+  text-align:center;
+  z-index:2;
+}
+.t1 { color:#f0f0f0; font-size:2.3rem; }
+.t1 span { color:#ff4b5c; }
+.t2 { color:#e0e0e0; font-size:1.9rem; }
+.t3 { color:#cfcfcf; font-size:1.4rem; }
+
+#scratchCanvas {
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  cursor:grab;
+  z-index:10;
+}
+
+#hint {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:white; text-align:center;
+  font-size:1.3rem; opacity:1;
+  transition:opacity 0.6s ease;
+  pointer-events:none;
+  z-index:15;
+  text-align:center;
+}
 </style>
 </head>
 <body>
 
 <div id="revealContainer">
+  <!-- Logo hinter Scratch -->
   <div id="logo"></div>
+
   <div id="content">
     <img class="background-img" src="Background.jpg" alt="Foto">
     <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
     <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
     <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
   </div>
+
   <canvas id="scratchCanvas"></canvas>
   <div id="hint">✨ Hier freirubbeln ✨</div>
-  <button id="startButton">Tippe, um Musik zu starten & freirubbeln</button>
 </div>
 
-<audio id="audio" preload="auto">
+<audio id="audio">
   <source src="Valentines_day.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-const canvas=document.getElementById("scratchCanvas");
-const ctx=canvas.getContext("2d");
-const hint=document.getElementById("hint");
-const t1=document.querySelector(".t1");
-const t2=document.querySelector(".t2");
-const t3=document.querySelector(".t3");
-const audio=document.getElementById("audio");
-const startButton=document.getElementById("startButton");
+const canvas = document.getElementById("scratchCanvas");
+const ctx = canvas.getContext("2d");
+const hint = document.getElementById("hint");
+const t1 = document.querySelector(".t1");
+const t2 = document.querySelector(".t2");
+const t3 = document.querySelector(".t3");
+const audio = document.getElementById("audio");
 
 let isDrawing=false, revealed=false, startedAudio=false;
 
 // Canvas auf High-DPI skalieren
 function resizeCanvas(){
-  const dpr=window.devicePixelRatio||1;
-  canvas.width=canvas.offsetWidth*dpr;
-  canvas.height=canvas.offsetHeight*dpr;
-  canvas.style.width=canvas.offsetWidth+"px";
-  canvas.style.height=canvas.offsetHeight+"px";
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth*dpr;
+  canvas.height = canvas.offsetHeight*dpr;
+  canvas.style.width = canvas.offsetWidth+"px";
+  canvas.style.height = canvas.offsetHeight+"px";
   ctx.setTransform(1,0,0,1,0,0);
   ctx.scale(dpr,dpr);
   ctx.fillStyle="#777";
@@ -71,22 +129,12 @@ function scratch(x,y){
   ctx.arc(x,y,30,0,Math.PI*2);
   ctx.fill();
   if(navigator.vibrate) navigator.vibrate(15);
-  if(!startedAudio){
-    startedAudio=true;
-    audio.volume=0.1;
-    audio.play().catch(()=>{});
-    // Lautstärke-Fade
-    let vol=0.1;
-    const fade=setInterval(()=>{
-      vol+=0.02;
-      if(vol>=1){vol=1; clearInterval(fade);}
-      audio.volume=vol;
-    },120);
-  }
+
+  if(!startedAudio) startAudio();
 }
 
 function getCleared(){
-  const data=ctx.getImageData(0,0,canvas.offsetWidth,canvas.offsetHeight).data;
+  const data = ctx.getImageData(0,0,canvas.offsetWidth,canvas.offsetHeight).data;
   let cleared=0;
   for(let i=3;i<data.length;i+=4) if(data[i]===0) cleared++;
   return cleared/(data.length/4);
@@ -95,38 +143,52 @@ function getCleared(){
 function triggerRevealOnce(){
   if(revealed) return;
   revealed=true;
+
   hint.style.opacity=0;
-  setTimeout(()=>{t1.style.opacity=1; t1.style.transition="opacity 1.6s ease";},200);
-  setTimeout(()=>{t2.style.opacity=1; t2.style.transition="opacity 1.6s ease";},1200);
-  setTimeout(()=>{t3.style.opacity=1; t3.style.transition="opacity 1.6s ease";},2000);
+
+  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; },200);
+  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; },1200);
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; },2000);
 }
 
-function checkReveal(){ if(getCleared()>0.15) triggerRevealOnce(); }
+function checkReveal(){ if(getCleared()>0.15) triggerRevealOnce(); } // schon bei 15% starten
 
 function getXY(e){
-  const rect=canvas.getBoundingClientRect();
-  let x,y;
-  if(e.touches){ x=e.touches[0].clientX-rect.left; y=e.touches[0].clientY-rect.top; }
-  else{ x=e.clientX-rect.left; y=e.clientY-rect.top; }
+  const rect = canvas.getBoundingClientRect();
+  let x, y;
+  if(e.touches){
+    x = e.touches[0].clientX - rect.left;
+    y = e.touches[0].clientY - rect.top;
+  } else {
+    x = e.clientX - rect.left;
+    y = e.clientY - rect.top;
+  }
   return {x,y};
 }
 
+// Musik starten beim ersten User-Gesture
+function startAudio(){
+  if(startedAudio) return;
+  startedAudio=true;
+  audio.volume=0.0;
+  audio.play().catch(()=>{});
+  let vol=0.0;
+  const fade=setInterval(()=>{
+    vol+=0.02;
+    if(vol>=1){ vol=1; clearInterval(fade);}
+    audio.volume=vol;
+  },120);
+}
+
 // Mouse Events
-canvas.addEventListener("mousedown", e=>{isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal();});
+canvas.addEventListener("mousedown", e=>{ isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
 canvas.addEventListener("mouseup", ()=>isDrawing=false);
-canvas.addEventListener("mousemove", e=>{if(!isDrawing) return; const p=getXY(e); scratch(p.x,p.y); checkReveal();});
+canvas.addEventListener("mousemove", e=>{ if(!isDrawing) return; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
 
 // Touch Events
-canvas.addEventListener("touchstart", e=>{e.preventDefault(); isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal();});
-canvas.addEventListener("touchmove", e=>{e.preventDefault(); const p=getXY(e); scratch(p.x,p.y); checkReveal();});
-canvas.addEventListener("touchend", e=>{e.preventDefault(); isDrawing=false;});
-
-// Start Button
-startButton.addEventListener("click", ()=>{
-  audio.volume=0.1;
-  audio.play().catch(()=>{});
-  startButton.style.display="none";
-});
+canvas.addEventListener("touchstart", e=>{ e.preventDefault(); isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
+canvas.addEventListener("touchmove", e=>{ e.preventDefault(); const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
+canvas.addEventListener("touchend", e=>{ e.preventDefault(); isDrawing=false; });
 </script>
 </body>
 </html>
