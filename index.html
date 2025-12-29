@@ -5,7 +5,6 @@
 <title>Valentine's Day Tribute</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
@@ -31,10 +30,10 @@ html, body {
   border-radius: 8px;
   margin-bottom: 20px;
   object-fit: contain;
-  animation: fadeInImg 2s ease forwards;
+  animation: fadeImg 2s ease forwards;
   opacity: 0;
 }
-@keyframes fadeInImg {
+@keyframes fadeImg {
   0% { opacity: 0; transform: scale(0.9); }
   100% { opacity: 1; transform: scale(1); }
 }
@@ -47,10 +46,10 @@ html, body {
   transform: rotate(45deg);
   border-radius: 4px;
   margin-bottom: 20px;
-  animation: fadeInSymbol 4s ease-out forwards;
+  animation: fadeSymbol 4s ease forwards;
   opacity: 0;
 }
-@keyframes fadeInSymbol {
+@keyframes fadeSymbol {
   0% { opacity: 0; transform: scale(0.6) rotate(45deg); }
   100% { opacity: 1; transform: scale(1) rotate(45deg); }
 }
@@ -68,7 +67,6 @@ html, body {
   position: relative;
   z-index: 2;
 }
-
 .t1 {
   color: #f0f0f0;
   font-size: 2.4rem;
@@ -95,7 +93,7 @@ html, body {
 @keyframes show2 { to { opacity: 1; transform: rotate(0deg) translateX(0); } }
 @keyframes show3 { to { opacity: 1; transform: rotate(0deg) translateX(0); } }
 
-/* Mobile */
+/* Mobile Anpassungen */
 @media (max-width: 600px) {
   .background-img { max-width: 80%; max-height: 40%; }
   .symbol { width: 22px; height: 22px; }
@@ -105,14 +103,14 @@ html, body {
   .t3 { font-size: 1.2rem; }
 }
 
-/* Rubbellos Overlay */
+/* Rubbellos */
 #scratchCanvas {
   position: absolute;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
   z-index: 99;
-  background: #212121;
+  background: rgba(33,33,33,0.92);
   cursor: grab;
   touch-action: none;
 }
@@ -122,44 +120,54 @@ html, body {
 @keyframes fadeOutOverlay {
   to { opacity: 0; }
 }
+
+/* Konfetti Container */
+#confetti-canvas {
+  pointer-events: none;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index: 200;
+}
 </style>
 </head>
 
 <body>
 
-<img class="background-img" src="Background.jpg" alt="Tribute Foto">
+<img class="background-img" src="Background.jpg" alt="Tribute Band Foto" />
 <div class="symbol"></div>
 <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
 <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
 <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
 
-<!-- Musik -->
 <audio id="audio" autoplay>
   <source src="Valentines_day.mp3" type="audio/mpeg" />
 </audio>
 
-<!-- Rubbellos Canvas -->
 <canvas id="scratchCanvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
 
 <script>
-// Audio Unlock
 document.body.addEventListener("click", () => {
   const a = document.getElementById("audio");
   if (a.paused) a.play();
 }, { once: true });
 
-// Scratch Overlay
+/* Scratch */
 const canvas = document.getElementById("scratchCanvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-// Gesamtschicht malen
-ctx.fillStyle = "#212121";
+ctx.fillStyle = "rgba(33,33,33,0.92)";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 let isDrawing = false;
 let scratched = 0;
+
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate(20);
+}
 
 function scratch(e) {
   const rect = canvas.getBoundingClientRect();
@@ -168,26 +176,60 @@ function scratch(e) {
 
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
-  ctx.arc(x, y, 45, 0, Math.PI * 2);
+  ctx.arc(x, y, 60, 0, Math.PI * 2);
   ctx.fill();
+  vibrate();
 }
 
 function checkReveal() {
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
   let alphaCount = 0;
-  for (let i = 3; i < pixels.length; i += 4) {
+  for (let i = 3; i < pixels.length; i+=4) {
     if (pixels[i] === 0) alphaCount++;
   }
   scratched = (alphaCount / (pixels.length / 4)) * 100;
-  if (scratched > 60) canvas.classList.add("reveal");
+
+  if (scratched > 60 && !canvas.classList.contains("reveal")) {
+    triggerConfetti();
+    canvas.classList.add("reveal");
+  }
 }
 
-canvas.addEventListener("mousedown", () => isDrawing = true);
-canvas.addEventListener("mouseup", () => { isDrawing = false; checkReveal(); });
-canvas.addEventListener("mousemove", e => isDrawing && scratch(e));
-canvas.addEventListener("touchstart", () => isDrawing = true);
-canvas.addEventListener("touchend", () => { isDrawing = false; checkReveal(); });
-canvas.addEventListener("touchmove", e => isDrawing && scratch(e));
+canvas.addEventListener("mousedown", ()=>isDrawing=true);
+canvas.addEventListener("mouseup", ()=>{isDrawing=false; checkReveal();});
+canvas.addEventListener("mousemove", e=>isDrawing && scratch(e));
+canvas.addEventListener("touchstart", ()=>isDrawing=true);
+canvas.addEventListener("touchend", ()=>{isDrawing=false; checkReveal();});
+canvas.addEventListener("touchmove", e=>isDrawing && scratch(e));
+
+/* Konfetti */
+function triggerConfetti(){
+  const c = document.getElementById("confetti-canvas");
+  const cx = c.getContext("2d");
+  c.width = innerWidth;
+  c.height = innerHeight;
+
+  const conf = [];
+  for(let i=0;i<200;i++){
+    conf.push({
+      x: Math.random()*c.width,
+      y: Math.random()*c.height - c.height,
+      size: Math.random()*6+3,
+      speed: Math.random()*2+1
+    });
+  }
+  function draw(){
+    cx.clearRect(0,0,c.width,c.height);
+    conf.forEach(p=>{
+      cx.fillStyle = `hsl(${Math.random()*360},70%,60%)`;
+      cx.fillRect(p.x, p.y, p.size, p.size);
+      p.y += p.speed;
+      if(p.y > c.height) p.y = -10;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
 </script>
 
 </body>
