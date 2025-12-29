@@ -9,36 +9,27 @@
 html, body {
   margin:0; padding:0; width:100%; height:100%;
   background:black;
-  display:flex; justify-content:center; align-items:center; flex-direction:column;
+  display:flex; justify-content:center; align-items:center;
   overflow:hidden;
   font-family:'Oswald',sans-serif;
 }
-
 #revealContainer {
   position:relative;
   width:90vw; max-width:500px;
   height:70vh; max-height:650px;
 }
-
 #content {
-  position:absolute;
-  width:100%; height:100%;
+  position:absolute; width:100%; height:100%;
   display:flex; flex-direction:column;
   justify-content:center; align-items:center;
   pointer-events:none;
-  opacity:1;
 }
-
-.background-img {
-  max-width:70%; border-radius:8px; margin-bottom:20px;
-}
-
+.background-img { max-width:70%; border-radius:8px; margin-bottom:20px; }
 .fade-text {
   opacity:0; margin:6px 0; letter-spacing:1.5px;
   text-transform:uppercase;
   text-shadow:2px 2px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.05);
-  font-size:2rem; font-weight:700;
-  text-align:center;
+  font-size:2rem; font-weight:700; text-align:center;
 }
 .t1 { color:#f0f0f0; font-size:2.3rem; }
 .t1 span { color:#ff4b5c; }
@@ -46,8 +37,7 @@ html, body {
 .t3 { color:#cfcfcf; font-size:1.4rem; }
 
 #scratchCanvas {
-  position:absolute;
-  width:100%; height:100%;
+  position:absolute; top:0; left:0;
   border-radius:8px;
   cursor:grab;
   z-index:10;
@@ -76,7 +66,6 @@ html, body {
   </div>
 
   <canvas id="scratchCanvas"></canvas>
-
   <div id="hint">✨ Zum Freirubbeln mit dem Finger oder der Maus ✨</div>
 </div>
 
@@ -98,11 +87,14 @@ let revealed = false;
 let startedAudio = false;
 
 function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  canvas.style.width = canvas.offsetWidth + "px";
+  canvas.style.height = canvas.offsetHeight + "px";
+  ctx.scale(devicePixelRatio, devicePixelRatio);
   ctx.fillStyle = "#777";
   ctx.globalCompositeOperation = "source-over";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
@@ -112,65 +104,45 @@ function scratch(x,y) {
   ctx.beginPath();
   ctx.arc(x, y, 30, 0, Math.PI*2);
   ctx.fill();
-
   if (navigator.vibrate) navigator.vibrate(15);
-
   if (!startedAudio) {
-    audio.volume = 0.1;
-    audio.play().catch(()=>{});
-    startedAudio = true;
+    audio.volume=0.1; audio.play().catch(()=>{}); startedAudio=true;
   }
 }
 
 function getCleared() {
-  const image = ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  let clear = 0;
-  for (let i = 3; i < image.length; i+=4) {
-    if (image[i]===0) clear++;
-  }
+  const image = ctx.getImageData(0,0,canvas.offsetWidth,canvas.offsetHeight).data;
+  let clear=0;
+  for(let i=3;i<image.length;i+=4){ if(image[i]===0) clear++; }
   return clear/(image.length/4);
 }
 
-function triggerRevealOnce() {
-  if (revealed) return;
-  revealed = true;
-
-  hint.style.opacity = 0;
-
-  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; }, 200);
-  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; }, 1200);
-  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; }, 2000);
-
-  let vol = 0.1;
-  const fade = setInterval(()=>{
-    vol += 0.02;
-    if(vol>=1){ vol=1; clearInterval(fade); }
-    audio.volume = vol;
-  },120);
+function triggerRevealOnce(){
+  if(revealed) return;
+  revealed=true;
+  hint.style.opacity=0;
+  setTimeout(()=>{t1.style.opacity=1; t1.style.transition="opacity 1.6s ease";},200);
+  setTimeout(()=>{t2.style.opacity=1; t2.style.transition="opacity 1.6s ease";},1200);
+  setTimeout(()=>{t3.style.opacity=1; t3.style.transition="opacity 1.6s ease";},2000);
+  let vol=0.1;
+  const fade=setInterval(()=>{vol+=0.02;if(vol>=1){vol=1;clearInterval(fade);}audio.volume=vol;},120);
 }
 
-function checkReveal() {
-  if(getCleared()>0.65) triggerRevealOnce();
+function checkReveal(){ if(getCleared()>0.65) triggerRevealOnce(); }
+
+function getRelativeXY(e){
+  const rect=canvas.getBoundingClientRect();
+  if(e.touches) e=e.touches[0];
+  return {x:(e.clientX-rect.left), y:(e.clientY-rect.top)};
 }
 
 canvas.addEventListener("mousedown",()=>isDrawing=true);
 canvas.addEventListener("mouseup",()=>isDrawing=false);
-canvas.addEventListener("mousemove", e=>{
-  if(!isDrawing) return;
-  const rect = canvas.getBoundingClientRect();
-  scratch(e.clientX-rect.left, e.clientY-rect.top);
-  checkReveal();
-});
+canvas.addEventListener("mousemove", e=>{if(!isDrawing) return; const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal();});
 
 canvas.addEventListener("touchstart",()=>isDrawing=true);
 canvas.addEventListener("touchend",()=>isDrawing=false);
-canvas.addEventListener("touchmove", e=>{
-  const t = e.touches[0];
-  const rect = canvas.getBoundingClientRect();
-  scratch(t.clientX-rect.left, t.clientY-rect.top);
-  checkReveal();
-});
+canvas.addEventListener("touchmove", e=>{const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal();});
 </script>
-
 </body>
 </html>
