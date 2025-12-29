@@ -35,10 +35,8 @@ html, body {
 
 .background-img {
   max-width:70%; border-radius:8px; margin-bottom:20px;
-  animation:fadeInImg 1s ease forwards;
-  opacity:0;
+  opacity:1;
 }
-@keyframes fadeInImg { 100% {opacity:1; transform:scale(1);} }
 
 /* Texte */
 .fade-text {
@@ -83,13 +81,13 @@ html, body {
     <img class="background-img" src="Background.jpg" alt="Foto">
     <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
     <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-    <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+    <div class="fade-text t3">14. Februar · Coesfeld 🖤</div>
   </div>
 
   <!-- Rubbelkarte -->
   <canvas id="scratchCanvas"></canvas>
 
-  <div id="hint">✨ Zum Freirubbeln mit dem Finger oder der Maus ✨</div>
+  <div id="hint">✨ Hier freirubbeln ✨</div>
 </div>
 
 <!-- Musik -->
@@ -108,7 +106,7 @@ const audio = document.getElementById("audio");
 
 let isDrawing = false;
 let revealed = false;
-let played = false;
+let startedAudio = false;
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth;
@@ -126,6 +124,13 @@ function scratch(x,y) {
   ctx.arc(x, y, 30, 0, Math.PI*2);
   ctx.fill();
   if (navigator.vibrate) navigator.vibrate(15);
+
+  // Audio beim ersten Rubbeln starten
+  if (!startedAudio) {
+    audio.volume = 0.1;
+    audio.play().catch(()=>{});
+    startedAudio = true;
+  }
 }
 
 function getCleared() {
@@ -141,53 +146,8 @@ function triggerRevealOnce() {
   if (revealed) return;
   revealed = true;
 
+  // Hinweis ausblenden
   hint.style.opacity = 0;
 
-  setTimeout(() => {
-    t1.style.opacity = 1;
-    t1.style.transition = "opacity 1.6s ease";
-  }, 200);
-
-  setTimeout(() => {
-    t2.style.opacity = 1;
-    t2.style.transition = "opacity 1.6s ease";
-  }, 1200);
-
-  setTimeout(() => {
-    t3.style.opacity = 1;
-    t3.style.transition = "opacity 1.6s ease";
-  }, 2000);
-
-  setTimeout(() => {
-    audio.volume = 1.0;
-    if (!played) audio.play();
-    played = true;
-  }, 500);
-}
-
-function checkReveal() {
-  const percent = getCleared();
-  if (percent > 0.65) triggerRevealOnce();
-}
-
-canvas.addEventListener("mousedown", ()=> isDrawing=true);
-canvas.addEventListener("mouseup", ()=> isDrawing=false);
-canvas.addEventListener("mousemove", e=>{
-  if (!isDrawing) return;
-  const rect = canvas.getBoundingClientRect();
-  scratch(e.clientX-rect.left, e.clientY-rect.top);
-  checkReveal();
-});
-
-canvas.addEventListener("touchstart", ()=> isDrawing=true);
-canvas.addEventListener("touchend", ()=> isDrawing=false);
-canvas.addEventListener("touchmove", e=>{
-  const t = e.touches[0];
-  const rect = canvas.getBoundingClientRect();
-  scratch(t.clientX-rect.left, t.clientY-rect.top);
-  checkReveal();
-});
-</script>
-
-</body>
-</html>
+  // Texte nacheinander einblenden
+  setTimeout(()=>{ t
