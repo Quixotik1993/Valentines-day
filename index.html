@@ -2,207 +2,179 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<title>Valentine's Day Tribute</title>
+<title>Birthday Reveal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-  font-family: 'Oswald', sans-serif;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
+  margin:0; padding:0; width:100%; height:100%;
+  background:black;
+  display:flex; justify-content:center; align-items:center; flex-direction:column;
+  overflow:hidden;
+  font-family:'Oswald',sans-serif;
 }
 
-/* Initially hide content until reveal */
-.hidden-content {
-  opacity: 0;
-  transition: opacity 2s ease;
+#revealContainer {
+  position:relative;
+  width:90vw; max-width:500px;
+  height:70vh; max-height:650px;
+  display:flex; justify-content:center; align-items:center;
 }
 
-/* Band Foto */
+/* Das Geschenk darunter */
+#content {
+  position:absolute;
+  width:100%; height:100%;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column;
+  opacity:0;
+  transition:opacity 2s ease;
+}
+
 .background-img {
-  max-width: 50%;
-  max-height: 50%;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  object-fit: contain;
+  max-width:70%; border-radius:8px; margin-bottom:20px;
+  animation:fadeInImg 2s ease forwards;
+  opacity:0;
 }
+@keyframes fadeInImg { 100% {opacity:1; transform:scale(1);} }
 
-/* LP Style Symbol */
-.symbol {
-  width: 30px;
-  height: 30px;
-  border: 2px solid #ffffffbb;
-  transform: rotate(45deg);
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-/* Text */
+/* Texte */
 .fade-text {
-  width: 100%;
-  text-align: center;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-size: 2rem;
-  position: relative;
-  z-index: 2;
+  opacity:0; margin:6px 0; letter-spacing:1.5px;
+  text-transform:uppercase;
+  text-shadow:2px 2px 6px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.05);
+  font-size:2rem; font-weight:700;
+  text-align:center;
 }
-.t1 { color: #f0f0f0; font-size: 2.4rem; }
-.t1 span { color: #ff4b5c; }
-.t2 { color: #e0e0e0; font-size: 2rem; }
-.t3 { color: #cfcfcf; font-size: 1.8rem; }
+.t1 { color:#f0f0f0; font-size:2.3rem; }
+.t1 span { color:#ff4b5c; }
+.t2 { color:#e0e0e0; font-size:1.9rem; }
+.t3 { color:#cfcfcf; font-size:1.4rem; }
 
-/* Rubbel Overlay */
+/* Scratch Canvas Overlay */
 #scratchCanvas {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 99;
-  background: rgba(33,33,33,0.92);
-  cursor: grab;
-  touch-action: none;
+  position:absolute;
+  width:100%; height:100%;
+  border-radius:8px;
+  cursor:grab;
 }
 
-/* Hinweistext */
+/* Hinweis */
 #hint {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  text-align: center;
-  font-family: 'Dancing Script', cursive;
-  font-size: 2.6rem;
-  color: white;
-  opacity: 0.9;
-  z-index: 120;
-  pointer-events: none;
-  transform: translateY(-50%);
-}
-.hidden-hint { opacity: 0; transition: opacity 1s ease; }
-
-/* Mobile Anpassung */
-@media (max-width: 600px) {
-  .background-img { max-width: 80%; max-height: 40%; }
-  .symbol { width: 22px; height: 22px; }
-  .fade-text { font-size: 1.3rem; letter-spacing: 1px; }
-  .t1 { font-size: 1.6rem; }
-  .t2 { font-size: 1.3rem; }
-  .t3 { font-size: 1.1rem; }
-  #hint { font-size: 2rem; }
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:white; text-align:center;
+  font-size:1.3rem; opacity:1;
+  transition:opacity 0.6s ease;
+  pointer-events:none;
 }
 </style>
 </head>
 
 <body>
-<!-- Hint -->
-<div id="hint">Rubbel, um dein Geschenk zu enthüllen 💗</div>
 
-<!-- Hidden content -->
-<div id="content" class="hidden-content">
-  <img class="background-img" src="Background.jpg" alt="Tribute Band Foto" />
-  <div class="symbol"></div>
-  <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
-  <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
-  <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+<div id="revealContainer">
+  <!-- Geschenk darunter -->
+  <div id="content">
+    <img class="background-img" src="Background.jpg" alt="Foto">
+    <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
+    <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
+    <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+  </div>
+
+  <!-- Scratch Overlay -->
+  <canvas id="scratchCanvas"></canvas>
+
+  <div id="hint">✨ Zum Freirubbeln mit dem Finger oder der Maus ✨</div>
 </div>
 
-<!-- Music -->
+<!-- Musik -->
 <audio id="audio">
-  <source src="Valentines_day.mp3" type="audio/mpeg" />
+  <source src="Valentines_day.mp3" type="audio/mpeg">
 </audio>
 
-<canvas id="scratchCanvas"></canvas>
-
 <script>
-/* Music – starts quiet then fades in after reveal */
-const audio = document.getElementById("audio");
-document.body.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.volume = 0.1;
-    audio.play();
-  }
-}, { once: true });
-
-function fadeInMusic() {
-  let vol = 0.1;
-  const fade = setInterval(() => {
-    vol += 0.02;
-    if (vol >= 1) {
-      vol = 1;
-      clearInterval(fade);
-    }
-    audio.volume = vol;
-  }, 120);
-}
-
-/* Scratch */
 const canvas = document.getElementById("scratchCanvas");
 const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+const hint = document.getElementById("hint");
+const content = document.getElementById("content");
+const audio = document.getElementById("audio");
 
-ctx.fillStyle = "rgba(33,33,33,0.92)";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+let played = false;
 let isDrawing = false;
-let scratched = 0;
-let revealed = false;
+let revealTriggered = false;
 
-function vibrate() {
-  if (navigator.vibrate) navigator.vibrate(20);
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  ctx.fillStyle = "#777";
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = "gray";
+  ctx.font = "bold 32px Oswald";
+  ctx.textAlign = "center";
+  ctx.fillText("Rubbel mich frei!", canvas.width/2, canvas.height/2);
 }
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-function scratch(e) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
+function scratch(x,y) {
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
-  ctx.arc(x, y, 60, 0, Math.PI * 2);
+  ctx.arc(x, y, 30, 0, Math.PI*2);
   ctx.fill();
-  vibrate();
+
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+
+function getPercentCleared() {
+  const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+  let cleared = 0;
+  for (let i=3; i<imageData.data.length; i+=4) {
+    if (imageData.data[i] === 0) cleared++;
+  }
+  return cleared / (imageData.data.length / 4);
 }
 
 function checkReveal() {
-  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  let alphaCount = 0;
-  for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) alphaCount++;
+  const percent = getPercentCleared();
+  if (percent > 0.65 && !revealTriggered) {
+    revealTriggered = true;
 
-  scratched = (alphaCount / (pixels.length / 4)) * 100;
+    canvas.style.pointerEvents = "none";
+    hint.style.opacity = 0;
 
-  if (scratched > 55 && !revealed) {
-    revealed = true;
-    canvas.style.transition = "opacity 2s ease";
-    canvas.style.opacity = 0;
-    document.getElementById("hint").classList.add("hidden-hint");
-    document.getElementById("content").style.opacity = 1;
-    fadeInMusic();
+    content.style.opacity = 1;
+
+    setTimeout(()=>{
+      audio.volume = 1.0;
+      if (!played) audio.play();
+      played = true;
+    }, 600);
   }
 }
 
-canvas.addEventListener("mousedown", ()=>isDrawing=true);
-canvas.addEventListener("mouseup", ()=>{isDrawing=false; checkReveal();});
-canvas.addEventListener("mousemove", e=>isDrawing && scratch(e));
+canvas.addEventListener("mousedown", ()=> { isDrawing=true; });
+canvas.addEventListener("mouseup", ()=> { isDrawing=false; });
+canvas.addEventListener("mousemove", e=>{
+  if (!isDrawing) return;
+  const rect = canvas.getBoundingClientRect();
+  scratch(e.clientX-rect.left, e.clientY-rect.top);
+  checkReveal();
+});
 
-canvas.addEventListener("touchstart", ()=>isDrawing=true);
-canvas.addEventListener("touchend", ()=>{isDrawing=false; checkReveal();});
-canvas.addEventListener("touchmove", e=>isDrawing && scratch(e));
+canvas.addEventListener("touchstart", ()=> isDrawing=true);
+canvas.addEventListener("touchend", ()=> isDrawing=false);
+canvas.addEventListener("touchmove", e=>{
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  scratch(touch.clientX-rect.left, touch.clientY-rect.top);
+  checkReveal();
+});
 </script>
 
 </body>
 </html>
-
