@@ -105,17 +105,6 @@ let isDrawing = false;
 let revealed = false;
 let startedAudio = false;
 
-// **Mobile Autoplay Fix: Musik startet beim ersten Tap/Touch**
-function startAudio() {
-  if (!startedAudio) {
-    audio.volume = 0.1;
-    audio.play().catch(()=>{});
-    startedAudio = true;
-  }
-}
-document.body.addEventListener("touchstart", startAudio, {once:true});
-document.body.addEventListener("click", startAudio, {once:true});
-
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth * devicePixelRatio;
   canvas.height = canvas.offsetHeight * devicePixelRatio;
@@ -136,6 +125,13 @@ function scratch(x,y) {
   ctx.fill();
 
   if (navigator.vibrate) navigator.vibrate(15);
+
+  // Musik beim allerersten Rubbeln starten
+  if (!startedAudio) {
+    audio.volume = 0.1;
+    audio.play().catch(()=>{});
+    startedAudio = true;
+  }
 }
 
 function getCleared() {
