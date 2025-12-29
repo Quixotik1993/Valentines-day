@@ -52,6 +52,7 @@ html, body {
 #scratchCanvas {
   position:absolute;
   top:0; left:0;
+  width:100%; height:100%;
   border-radius:8px;
   cursor:grab;
   z-index:10;
@@ -106,24 +107,18 @@ let isDrawing = false;
 let revealed = false;
 let startedAudio = false;
 
-// Canvas auf High-DPI einstellen
+// Canvas initial füllen
 function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * devicePixelRatio;
-  canvas.height = rect.height * devicePixelRatio;
-  canvas.style.width = rect.width + "px";
-  canvas.style.height = rect.height + "px";
-  ctx.setTransform(1,0,0,1,0,0); // Reset Transform
-  ctx.scale(devicePixelRatio, devicePixelRatio);
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
   ctx.fillStyle = "#777";
-  ctx.globalCompositeOperation = "source-over";
-  ctx.fillRect(0,0,rect.width,rect.height);
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 // Scratch-Funktion
-function scratch(x,y) {
+function scratch(x, y) {
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
   ctx.arc(x, y, 30, 0, Math.PI*2);
@@ -132,7 +127,7 @@ function scratch(x,y) {
   if (navigator.vibrate) navigator.vibrate(15);
 
   // Musik beim ersten Rubbeln starten
-  if (!startedAudio) {
+  if(!startedAudio){
     audio.volume = 0.1;
     audio.play().catch(()=>{});
     startedAudio = true;
@@ -140,9 +135,9 @@ function scratch(x,y) {
 }
 
 function getCleared() {
-  const image = ctx.getImageData(0,0,canvas.offsetWidth,canvas.offsetHeight).data;
+  const image = ctx.getImageData(0,0,canvas.width,canvas.height).data;
   let clear = 0;
-  for (let i=3;i<image.length;i+=4){ if(image[i]===0) clear++; }
+  for(let i=3;i<image.length;i+=4){ if(image[i]===0) clear++; }
   return clear/(image.length/4);
 }
 
@@ -150,18 +145,18 @@ function triggerRevealOnce() {
   if(revealed) return;
   revealed = true;
 
-  hint.style.opacity=0;
+  hint.style.opacity = 0;
 
-  setTimeout(()=>{t1.style.opacity=1; t1.style.transition="opacity 1.6s ease";},200);
-  setTimeout(()=>{t2.style.opacity=1; t2.style.transition="opacity 1.6s ease";},1200);
-  setTimeout(()=>{t3.style.opacity=1; t3.style.transition="opacity 1.6s ease";},2000);
+  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; }, 200);
+  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; }, 1200);
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; }, 2000);
 
   // Musik fade-in
-  let vol=0.1;
-  const fade=setInterval(()=>{
-    vol+=0.02;
-    if(vol>=1){ vol=1; clearInterval(fade); }
-    audio.volume=vol;
+  let vol = 0.1;
+  const fade = setInterval(()=>{
+    vol += 0.02;
+    if(vol >= 1){ vol=1; clearInterval(fade); }
+    audio.volume = vol;
   },120);
 }
 
@@ -170,20 +165,18 @@ function checkReveal(){ if(getCleared()>0.65) triggerRevealOnce(); }
 function getRelativeXY(e){
   const rect = canvas.getBoundingClientRect();
   if(e.touches) e = e.touches[0];
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  return {x:(e.clientX - rect.left) * scaleX / devicePixelRatio, y:(e.clientY - rect.top) * scaleY / devicePixelRatio};
+  return {x: e.clientX - rect.left, y: e.clientY - rect.top};
 }
 
 // Mouse Events
 canvas.addEventListener("mousedown",()=>isDrawing=true);
 canvas.addEventListener("mouseup",()=>isDrawing=false);
-canvas.addEventListener("mousemove", e=>{if(!isDrawing) return; const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal();});
+canvas.addEventListener("mousemove", e=>{ if(!isDrawing) return; const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal(); });
 
 // Touch Events
-canvas.addEventListener("touchstart",()=>isDrawing=true);
-canvas.addEventListener("touchend",()=>isDrawing=false);
-canvas.addEventListener("touchmove", e=>{const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal();});
+canvas.addEventListener("touchstart", e=>{ isDrawing=true; const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal(); });
+canvas.addEventListener("touchend", ()=>isDrawing=false);
+canvas.addEventListener("touchmove", e=>{ const pos=getRelativeXY(e); scratch(pos.x,pos.y); checkReveal(); });
 </script>
 
 </body>
