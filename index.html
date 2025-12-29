@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -105,19 +106,23 @@ let isDrawing = false;
 let revealed = false;
 let startedAudio = false;
 
+// Canvas auf High-DPI einstellen
 function resizeCanvas() {
-  canvas.width = canvas.offsetWidth * devicePixelRatio;
-  canvas.height = canvas.offsetHeight * devicePixelRatio;
-  canvas.style.width = canvas.offsetWidth + "px";
-  canvas.style.height = canvas.offsetHeight + "px";
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * devicePixelRatio;
+  canvas.height = rect.height * devicePixelRatio;
+  canvas.style.width = rect.width + "px";
+  canvas.style.height = rect.height + "px";
+  ctx.setTransform(1,0,0,1,0,0); // Reset Transform
   ctx.scale(devicePixelRatio, devicePixelRatio);
   ctx.fillStyle = "#777";
   ctx.globalCompositeOperation = "source-over";
-  ctx.fillRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+  ctx.fillRect(0,0,rect.width,rect.height);
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
+// Scratch-Funktion
 function scratch(x,y) {
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
@@ -126,7 +131,7 @@ function scratch(x,y) {
 
   if (navigator.vibrate) navigator.vibrate(15);
 
-  // Musik beim allerersten Rubbeln starten
+  // Musik beim ersten Rubbeln starten
   if (!startedAudio) {
     audio.volume = 0.1;
     audio.play().catch(()=>{});
@@ -163,9 +168,11 @@ function triggerRevealOnce() {
 function checkReveal(){ if(getCleared()>0.65) triggerRevealOnce(); }
 
 function getRelativeXY(e){
-  const rect=canvas.getBoundingClientRect();
-  if(e.touches) e=e.touches[0];
-  return {x:(e.clientX-rect.left), y:(e.clientY-rect.top)};
+  const rect = canvas.getBoundingClientRect();
+  if(e.touches) e = e.touches[0];
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {x:(e.clientX - rect.left) * scaleX / devicePixelRatio, y:(e.clientY - rect.top) * scaleY / devicePixelRatio};
 }
 
 // Mouse Events
