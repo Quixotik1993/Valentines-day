@@ -106,89 +106,117 @@ const t2 = document.querySelector(".t2");
 const t3 = document.querySelector(".t3");
 const audio = document.getElementById("audio");
 
-let isDrawing=false, revealed=false, startedAudio=false;
+let isDrawing = false;
+let revealed = false;
+let allowAudioStart = false;
+let audioStarted = false;
 
-// Canvas auf High-DPI skalieren
+// Canvas skalieren
 function resizeCanvas(){
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth*dpr;
-  canvas.height = canvas.offsetHeight*dpr;
-  canvas.style.width = canvas.offsetWidth+"px";
-  canvas.style.height = canvas.offsetHeight+"px";
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = canvas.offsetHeight * dpr;
+  canvas.style.width = canvas.offsetWidth + "px";
+  canvas.style.height = canvas.offsetHeight + "px";
   ctx.setTransform(1,0,0,1,0,0);
-  ctx.scale(dpr,dpr);
-  ctx.fillStyle="#777";
+  ctx.scale(dpr, dpr);
+  ctx.fillStyle = "#777";
   ctx.fillRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-function scratch(x,y){
-  ctx.globalCompositeOperation="destination-out";
+// Scratch
+function scratch(x, y){
+  ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
-  ctx.arc(x,y,30,0,Math.PI*2);
+  ctx.arc(x, y, 30, 0, Math.PI * 2);
   ctx.fill();
-  if(navigator.vibrate) navigator.vibrate(15);
-
-  if(!startedAudio) startAudio();
+  if (navigator.vibrate) navigator.vibrate(15);
 }
 
 function getCleared(){
-  const data = ctx.getImageData(0,0,canvas.offsetWidth,canvas.offsetHeight).data;
-  let cleared=0;
-  for(let i=3;i<data.length;i+=4) if(data[i]===0) cleared++;
-  return cleared/(data.length/4);
+  const d = ctx.getImageData(0,0,canvas.offsetWidth, canvas.offsetHeight).data;
+  let cleared = 0;
+  for(let i=3;i<d.length;i+=4) if(d[i]===0) cleared++;
+  return cleared / (d.length / 4);
 }
 
-function triggerRevealOnce(){
-  if(revealed) return;
-  revealed=true;
+function reveal(){
+  if (revealed) return;
+  revealed = true;
+  hint.style.opacity = 0;
 
-  hint.style.opacity=0;
+  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s";},200);
+  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s";},1200);
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s";},2000);
 
-  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s ease"; },200);
-  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s ease"; },1200);
-  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s ease"; },2000);
+  // sobald Reveal abgeschlossen wurde → Audio darf starten
+  allowAudioStart = true;
+  tryStartAudio();
 }
 
-function checkReveal(){ if(getCleared()>0.15) triggerRevealOnce(); } // schon bei 15% starten
+function tryStartAudio(){
+  if(!allowAudioStart || audioStarted) return;
+  audioStarted = true;
+
+  audio.volume = 0;
+  audio.play().catch(()=>{ audioStarted = false; return; });
+
+  let v = 0;
+  const fade = setInterval(()=>{
+    v += 0.02;
+    if(v>=1){ v=1; clearInterval(fade); }
+    audio.volume = v;
+  }, 120);
+}
 
 function getXY(e){
-  const rect = canvas.getBoundingClientRect();
-  let x, y;
+  const r = canvas.getBoundingClientRect();
+  let x,y;
   if(e.touches){
-    x = e.touches[0].clientX - rect.left;
-    y = e.touches[0].clientY - rect.top;
+    x = e.touches[0].clientX - r.left;
+    y = e.touches[0].clientY - r.top;
   } else {
-    x = e.clientX - rect.left;
-    y = e.clientY - rect.top;
+    x = e.clientX - r.left;
+    y = e.clientY - r.top;
   }
   return {x,y};
 }
 
-// Musik starten beim ersten User-Gesture
-function startAudio(){
-  if(startedAudio) return;
-  startedAudio=true;
-  audio.volume=0.0;
-  audio.play().catch(()=>{});
-  let vol=0.0;
-  const fade=setInterval(()=>{
-    vol+=0.02;
-    if(vol>=1){ vol=1; clearInterval(fade);}
-    audio.volume=vol;
-  },120);
-}
+// EVENTS
+canvas.addEventListener("mousedown", e=>{
+  isDrawing = true;
+  const p=getXY(e);
+  scratch(p.x,p.y);
+});
+canvas.addEventListener("mousemove", e=>{
+  if(!isDrawing) return;
+  const p=getXY(e);
+  scratch(p.x,p.y);
+});
+canvas.addEventListener("mouseup", ()=>{
+  isDrawing=false;
+  if(getCleared()>0.15) reveal();
+});
 
-// Mouse Events
-canvas.addEventListener("mousedown", e=>{ isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
-canvas.addEventListener("mouseup", ()=>isDrawing=false);
-canvas.addEventListener("mousemove", e=>{ if(!isDrawing) return; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
-
-// Touch Events
-canvas.addEventListener("touchstart", e=>{ e.preventDefault(); isDrawing=true; const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
-canvas.addEventListener("touchmove", e=>{ e.preventDefault(); const p=getXY(e); scratch(p.x,p.y); checkReveal(); });
-canvas.addEventListener("touchend", e=>{ e.preventDefault(); isDrawing=false; });
+canvas.addEventListener("touchstart", e=>{
+  e.preventDefault();
+  isDrawing = true;
+  const p=getXY(e);
+  scratch(p.x,p.y);
+});
+canvas.addEventListener("touchmove", e=>{
+  e.preventDefault();
+  const p=getXY(e);
+  scratch(p.x,p.y);
+});
+canvas.addEventListener("touchend", e=>{
+  e.preventDefault();
+  isDrawing = false;
+  if(getCleared()>0.15) reveal();
+});
 </script>
+
 </body>
 </html>
