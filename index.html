@@ -86,8 +86,11 @@ html, body {
   <div id="content">
     <img class="background-img" src="Background.jpg" alt="Foto">
     <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
+
+    <!-- GEÄNDERT – jetzt zwei Zeilen -->
     <div class="fade-text t2">Konzertkarten für</div>
-<div class="fade-text t2">One Step Closer 🎶</div>
+    <div class="fade-text t2">One Step Closer 🎶</div>
+
     <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
     <div class="fade-text t4">…und vorher gibt’s ein Brauhaus-Date 🍻😘</div>
   </div>
@@ -105,7 +108,7 @@ const canvas = document.getElementById("scratchCanvas");
 const ctx = canvas.getContext("2d");
 const hint = document.getElementById("hint");
 const t1 = document.querySelector(".t1");
-const t2 = document.querySelector(".t2");
+const t2 = document.querySelectorAll(".t2");
 const t3 = document.querySelector(".t3");
 const t4 = document.querySelector(".t4");
 const audio = document.getElementById("audio");
@@ -152,8 +155,12 @@ function reveal(){
   hint.style.opacity = 0;
 
   setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s";}, 200);
-  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s";}, 1200);
-  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s";}, 2000);
+
+  // beide .t2 Elemente nacheinander leicht zeitversetzt sichtbar machen
+  setTimeout(()=>{ t2[0].style.opacity=1; t2[0].style.transition="opacity 1.6s";}, 1200);
+  setTimeout(()=>{ t2[1].style.opacity=1; t2[1].style.transition="opacity 1.6s";}, 1600);
+
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s";}, 2200);
   setTimeout(()=>{ t4.style.opacity=1; t4.style.transition="opacity 1.8s";}, 3000);
 
   allowAudioStart = true;
