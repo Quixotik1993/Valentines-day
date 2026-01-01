@@ -38,7 +38,7 @@ html, body {
   position:absolute;
   top:50%; left:50%;
   transform:translate(-50%,-50%);
-  width:150px; height:150px; /* Logo-Größe */
+  width:150px; height:150px;
   background: url('Logo.png') no-repeat center/contain;
   opacity:1;
   z-index:1;
@@ -56,6 +56,7 @@ html, body {
 .t1 span { color:#ff4b5c; }
 .t2 { color:#e0e0e0; font-size:1.9rem; }
 .t3 { color:#cfcfcf; font-size:1.4rem; }
+.t4 { color:#e8e8e8; font-size:1.4rem; font-style:italic; }
 
 #scratchCanvas {
   position:absolute; top:0; left:0;
@@ -87,10 +88,11 @@ html, body {
     <div class="fade-text t1">Alles Liebe zum Geburtstag, <span>Linda ❤️</span></div>
     <div class="fade-text t2">Konzertkarten für One Step Closer 🎶</div>
     <div class="fade-text t3">14. Februar · Coesfeld · Live 🖤</div>
+    <div class="fade-text t4">…und vorher gibt’s ein Brauhaus-Date 🍻</div>
   </div>
 
   <canvas id="scratchCanvas"></canvas>
-  <div id="hint">✨ Hier freirubbeln v1✨</div>
+  <div id="hint">✨ Hier freirubbeln ✨</div>
 </div>
 
 <audio id="audio">
@@ -104,6 +106,7 @@ const hint = document.getElementById("hint");
 const t1 = document.querySelector(".t1");
 const t2 = document.querySelector(".t2");
 const t3 = document.querySelector(".t3");
+const t4 = document.querySelector(".t4");
 const audio = document.getElementById("audio");
 
 let isDrawing = false;
@@ -147,11 +150,11 @@ function reveal(){
   revealed = true;
   hint.style.opacity = 0;
 
-  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s";},200);
-  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s";},1200);
-  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s";},2000);
+  setTimeout(()=>{ t1.style.opacity=1; t1.style.transition="opacity 1.6s";}, 200);
+  setTimeout(()=>{ t2.style.opacity=1; t2.style.transition="opacity 1.6s";}, 1200);
+  setTimeout(()=>{ t3.style.opacity=1; t3.style.transition="opacity 1.6s";}, 2000);
+  setTimeout(()=>{ t4.style.opacity=1; t4.style.transition="opacity 1.8s";}, 3000);
 
-  // sobald Reveal abgeschlossen wurde → Audio darf starten
   allowAudioStart = true;
   tryStartAudio();
 }
@@ -187,13 +190,11 @@ function getXY(e){
 // EVENTS
 canvas.addEventListener("mousedown", e=>{
   isDrawing = true;
-  const p=getXY(e);
-  scratch(p.x,p.y);
+  const p=getXY(e); scratch(p.x,p.y);
 });
 canvas.addEventListener("mousemove", e=>{
   if(!isDrawing) return;
-  const p=getXY(e);
-  scratch(p.x,p.y);
+  const p=getXY(e); scratch(p.x,p.y);
 });
 canvas.addEventListener("mouseup", ()=>{
   isDrawing=false;
@@ -203,13 +204,11 @@ canvas.addEventListener("mouseup", ()=>{
 canvas.addEventListener("touchstart", e=>{
   e.preventDefault();
   isDrawing = true;
-  const p=getXY(e);
-  scratch(p.x,p.y);
+  const p=getXY(e); scratch(p.x,p.y);
 });
 canvas.addEventListener("touchmove", e=>{
   e.preventDefault();
-  const p=getXY(e);
-  scratch(p.x,p.y);
+  const p=getXY(e); scratch(p.x,p.y);
 });
 canvas.addEventListener("touchend", e=>{
   e.preventDefault();
